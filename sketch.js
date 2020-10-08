@@ -7,11 +7,26 @@ var engine, world;
 var box1, pig1,pig3;
 var backgroundImg,platform;
 var bird, slingshot;
-
 var gameState = "onSling";
+var bgimg;
+
+async function getBG(){
+    var response=await fetch("https://worldtimeapi.org/api/timezone/America/Los_Angeles");
+    var resJSON=await response.json();
+    var dt=resJSON.datetime;
+    var hr=dt.slice(11,13)
+    console.log(hr);
+    if (hr>=6 && hr<=18){
+        bgimg="sprites/bg.png";
+    }
+    else{
+        bgimg="sprites/bg2.jpg";
+    }
+    backgroundImg = loadImage(bgimg);
+}
 
 function preload() {
-    backgroundImg = loadImage("sprites/bg.png");
+    getBG();
 }
 
 function setup(){
@@ -45,7 +60,14 @@ function setup(){
 }
 
 function draw(){
-    background(backgroundImg);
+    if (backgroundImg){
+        background(backgroundImg);
+    }
+    /*
+    if (){
+        d
+    }
+    */
     Engine.update(engine);
     //strokeWeight(4);
     box1.display();
@@ -83,6 +105,11 @@ function mouseReleased(){
 
 function keyPressed(){
     if(keyCode === 32){
-       // slingshot.attach(bird.body);
+       slingshot.attach(bird.body);
+       gameState="onSling";
+       bird.trajectory=[];
+       Matter.Body.setPosition(bird.body, {x:200,y:50});
+       console.log(bird);
+       Matter.Body.setAngle(bird.body, 0)
     }
 }
